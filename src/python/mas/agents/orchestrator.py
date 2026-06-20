@@ -1,14 +1,82 @@
-from tkinter import END
+import json
 
-from python.mas.state import MasState
+from langgraph.graph import END
+
+from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
+
+from python.config import MODEL_NAME
+from python.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT
+from python.mas.agents.util import add_global_messages, add_agent_history, add_task_list, add_model_diff
+from python.mas.state import State
 
 
-def orchestrator(state: MasState):
-    pass
+async def orchestrator(state: State):
+    system_parts = [ORCHESTRATOR_PROMPT]
+    prompt_parts = []
+
+    add_agent_history(state=state, input_list=system_parts, agent_name="orchestrator")
+    add_task_list(state=state, input_list=system_parts)
+
+    add_global_messages(state=state, input_list=prompt_parts)
+    add_model_diff(state=state, input_list=prompt_parts)
+
+    system = "\n\n".join(system_parts)
+    prompt = "\n\n".join(prompt_parts)
+
+    async def run():
+        result = None
+        async for message in query(
+                prompt=prompt,
+                options=ClaudeAgentOptions(
+                    model=MODEL_NAME,
+                    system_prompt=system,
+                    permission_mode="dontAsk",
+                ),
+        ):
+            if isinstance(message, ResultMessage):
+                result = message.result
+        return result
+
+    result = await run()
+    if not result:
+        raise RuntimeError("Orchestrator returned no result")
+
+    json_result = json.loads(result)
+
+    return {"global_messages": [{"node": "orchestrator", "message": json_result["message"]}],
+            "task_list": [{"task": t["task"], "reasoning": t["reasoning"]} for t in json_result["task_list"]],
+            "orchestrator_history": json_result["orchestrator_history"]}
 
 
-def orchestrator_path(state: MasState):
-    pass
+async def orchestrator_path(state: State):
+    system_parts = [ORCHESTRATOR_PATH_PROMPT]
+    prompt_parts = []
+
+    add_task_list(state=state, input_list=prompt_parts)
+    add_global_messages(state=state, input_list=prompt_parts)
+
+    system = "\n\n".join(system_parts)
+    prompt = "\n\n".join(prompt_parts)
+
+    async def run():
+        result = None
+        async for message in query(
+                prompt=prompt,
+                options=ClaudeAgentOptions(
+                    model=MODEL_NAME,
+                    system_prompt=system,
+                    permission_mode="dontAsk",
+                ),
+        ):
+            if isinstance(message, ResultMessage):
+                result = message.result
+        return result
+
+    result = await run()
+    if not result:
+        raise RuntimeError("Orchestrator_path returned no result")
+
+    return result
 
 
 orchestrator_path_map = {"model_diff_change_analyzer": "model_diff_change_analyzer",
