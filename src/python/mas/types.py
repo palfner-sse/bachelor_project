@@ -21,3 +21,4 @@ class Issue(TypedDict):
 class Task(TypedDict):
     task: str
     reasoning: str
+    agent: str

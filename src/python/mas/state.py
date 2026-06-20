@@ -18,4 +18,4 @@ class State(TypedDict):
     code_changer_history: Annotated[List[str], operator.add]
     model_diff_change_analysis_validator_history: Annotated[List[str], operator.add]
     model_diff_change_analyzer_history: Annotated[List[str], operator.add]
-    orchestrator_history: Annotated[List[Issue], operator.add]
+    orchestrator_history: Annotated[List[str], operator.add]
