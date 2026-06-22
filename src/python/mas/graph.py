@@ -12,6 +12,7 @@ from python.mas.agents.model_diff_change_analyzer import model_diff_change_analy
 from python.mas.agents.orchestrator import orchestrator, orchestrator_path, orchestrator_path_map
 from python.mas.state import State
 
+# TODO make the agents only use a provided path
 
 def create_graph():
     mas_graph = StateGraph(State)

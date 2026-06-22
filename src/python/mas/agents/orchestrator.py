@@ -5,13 +5,13 @@ from langgraph.graph import END
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 from python.config import MODEL_NAME
-from python.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT
+from python.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
 from python.mas.agents.util import add_global_messages, add_agent_history, add_task_list, add_model_diff
 from python.mas.state import State
 
 
 async def orchestrator(state: State):
-    system_parts = [ORCHESTRATOR_PROMPT]
+    system_parts = [ORCHESTRATOR_PROMPT, BUML_DOKUMENTATION]
     prompt_parts = []
 
     add_agent_history(state=state, input_list=system_parts, agent_name="orchestrator")
@@ -31,6 +31,7 @@ async def orchestrator(state: State):
                     model=MODEL_NAME,
                     system_prompt=system,
                     permission_mode="dontAsk",
+                    tools=["WebFetch"]
                 ),
         ):
             if isinstance(message, ResultMessage):
