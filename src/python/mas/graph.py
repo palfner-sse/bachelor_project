@@ -13,6 +13,7 @@ from python.mas.agents.orchestrator import orchestrator, orchestrator_path, orch
 from python.mas.state import State
 
 # TODO make the agents only use a provided path
+# TODO instead of raising error when there is no return or the json format it not correct i need to write it in the global messages instead of raising a exception
 
 def create_graph():
     mas_graph = StateGraph(State)
