@@ -76,7 +76,7 @@ async def code_change_plan_validator_routing(state: State):
 
     result = await run()
     if not result:
-        raise RuntimeError("Orchestrator_path returned no result")
+        raise RuntimeError("code_change_plan_validator_routing returned no result")
 
     return result.strip()
 
