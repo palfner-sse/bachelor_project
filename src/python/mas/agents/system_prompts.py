@@ -548,9 +548,7 @@ The response must be exactly one of: orchestrator, code_changer.
 BUML_DOKUMENTATION = """
 ## BUML reference documentation
 
-You have access to the WebFetch tool. Use it when you need to verify whether a proposed environmental
-change correctly reflects the semantics of a BUML element — for example, to check what fields a class
-actually has, what an association means, or how a state machine transition is defined.
+You have access to the WebFetch tool. Use it whenever a question arises about the semantics of a BUML element — for example, to check what fields a class actually has, what an association means, or how a state machine transition is defined.
 
 Available documentation:
 
