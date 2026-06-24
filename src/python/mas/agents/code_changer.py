@@ -3,12 +3,13 @@ import json
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 from python.config import MODEL_NAME
+from python.mas.agents.system_prompts import CODE_CHANGER_PROMPT
 from python.mas.agents.util import add_agent_history, add_task_list, add_global_messages, add_issues
 from python.mas.state import State
 
 
 async def code_changer(state: State):
-    system_parts = []
+    system_parts = [CODE_CHANGER_PROMPT]
     prompt_parts = []
 
     add_agent_history(state=state, input_list=system_parts, agent_name="code_changer")
