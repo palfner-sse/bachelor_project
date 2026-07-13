@@ -1,9 +1,6 @@
-import os
+AGENT_MODEL = "claude-haiku-4-5-20251001"
+ROUTING_MODEL = "claude-haiku-4-5-20251001"
 
-OLLAMA_ENDPOINT_URL = "http://localhost:11434"
-EMBEDDING_TYPE = "nomic-embed-text"
-MODEL_NAME = "gemma4:32k"
+AGENT_CWD = "/home/klausmp/dev/work/bachelor_project/input/before/code_base/src"
 
-os.environ["ANTHROPIC_BASE_URL"] = OLLAMA_ENDPOINT_URL
-os.environ["ANTHROPIC_AUTH_TOKEN"] = "ollama"
-os.environ["ANTHROPIC_API_KEY"] = ""
+OLLAMA_ENV = {}

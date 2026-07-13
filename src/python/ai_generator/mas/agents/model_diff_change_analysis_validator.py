@@ -2,12 +2,12 @@ import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import MODEL_NAME
-from python.mas.agents.system_prompts import MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PROMPT, \
+from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
+from python.ai_generator.mas.agents.system_prompts import MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PROMPT, \
     MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from python.mas.agents.util import add_agent_history, add_proposed_environmental_changes, add_model_diff, \
-    add_global_messages, add_task_list, add_models, add_issues
-from python.mas.state import State
+from python.ai_generator.mas.agents.util import add_agent_history, add_proposed_environmental_changes, add_model_diff, \
+    add_global_messages, add_task_list, add_models, add_issues, strip_json_markdown, run_with_retry
+from python.ai_generator.mas.state import State
 
 
 async def model_diff_change_analysis_validator(state: State):
@@ -30,21 +30,23 @@ async def model_diff_change_analysis_validator(state: State):
         async for message in query(
                 prompt=prompt,
                 options=ClaudeAgentOptions(
-                    model=MODEL_NAME,
+                    model=AGENT_MODEL,
                     system_prompt=system,
-                    permission_mode="dontAsk",
+                    permission_mode="bypassPermissions",
                     tools=["WebFetch"],
+                    cwd=AGENT_CWD,
                 ),
         ):
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
 
-    result = await run()
+    result = await run_with_retry(run, "model_diff_change_analysis_validator")
     if not result:
         raise RuntimeError("model_diff_change_analysis_validator returned no result")
 
-    json_result = json.loads(result)
+    print("RAW RESULT [model_diff_change_analysis_validator]:", repr(result))
+    json_result = json.loads(strip_json_markdown(result))
 
     return {"global_messages": [{"node": "model_diff_change_analysis_validator", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
@@ -67,16 +69,18 @@ async def model_diff_change_analysis_validator_router(state: State):
         async for message in query(
                 prompt=prompt,
                 options=ClaudeAgentOptions(
-                    model=MODEL_NAME,
+                    model=ROUTING_MODEL,
                     system_prompt=system,
-                    permission_mode="dontAsk",
+                    permission_mode="bypassPermissions",
+                    tools=["WebFetch"],
+                    cwd=AGENT_CWD,
                 ),
         ):
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
 
-    result = await run()
+    result = await run_with_retry(run, "model_diff_change_analysis_validator_router")
     if not result:
         raise RuntimeError("Orchestrator_path returned no result")
 

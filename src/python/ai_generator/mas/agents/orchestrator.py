@@ -4,10 +4,10 @@ from langgraph.graph import END
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import MODEL_NAME
-from python.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from python.mas.agents.util import add_global_messages, add_agent_history, add_task_list, add_model_diff
-from python.mas.state import State
+from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
+from python.ai_generator.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
+from python.ai_generator.mas.agents.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
+from python.ai_generator.mas.state import State
 
 
 async def orchestrator(state: State):
@@ -28,21 +28,23 @@ async def orchestrator(state: State):
         async for message in query(
                 prompt=prompt,
                 options=ClaudeAgentOptions(
-                    model=MODEL_NAME,
+                    model=AGENT_MODEL,
                     system_prompt=system,
-                    permission_mode="dontAsk",
-                    tools=["WebFetch"]
+                    permission_mode="bypassPermissions",
+                    tools=["WebFetch"],
+                    cwd=AGENT_CWD,
                 ),
         ):
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
 
-    result = await run()
+    result = await run_with_retry(run, "orchestrator")
     if not result:
         raise RuntimeError("Orchestrator returned no result")
 
-    json_result = json.loads(result)
+    print("RAW RESULT [orchestrator]:", repr(result))
+    json_result = json.loads(strip_json_markdown(result))
 
     return {"global_messages": [{"node": "orchestrator", "message": json_result["message"]}],
             "task_list": [{"task": t["task"], "reasoning": t["reasoning"], "agent": t["agent"]} for t in
@@ -65,16 +67,18 @@ async def orchestrator_path(state: State):
         async for message in query(
                 prompt=prompt,
                 options=ClaudeAgentOptions(
-                    model=MODEL_NAME,
+                    model=ROUTING_MODEL,
                     system_prompt=system,
-                    permission_mode="dontAsk",
+                    permission_mode="bypassPermissions",
+                    tools=["WebFetch"],
+                    cwd=AGENT_CWD,
                 ),
         ):
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
 
-    result = await run()
+    result = await run_with_retry(run, "orchestrator_path")
     if not result:
         raise RuntimeError("Orchestrator_path returned no result")
 

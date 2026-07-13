@@ -2,11 +2,12 @@ import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import MODEL_NAME
-from python.mas.agents.system_prompts import BUML_DOKUMENTATION, CODE_CHANGE_VALIDATOR_PROMPT
-from python.mas.agents.util import add_agent_history, add_task_list, add_global_messages, add_model_diff, add_models, \
-    add_issues
-from python.mas.state import State
+from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
+from python.ai_generator.mas.agents.system_prompts import BUML_DOKUMENTATION, CODE_CHANGE_VALIDATOR_PROMPT, \
+    CODE_CHANGE_VALIDATOR_PATH_PROMPT
+from python.ai_generator.mas.agents.util import add_agent_history, add_task_list, add_global_messages, add_model_diff, add_models, \
+    add_issues, strip_json_markdown, run_with_retry
+from python.ai_generator.mas.state import State
 
 
 async def code_change_validator(state: State):
@@ -29,21 +30,23 @@ async def code_change_validator(state: State):
         async for message in query(
                 prompt=prompt,
                 options=ClaudeAgentOptions(
-                    model=MODEL_NAME,
+                    model=AGENT_MODEL,
                     system_prompt=system,
-                    permission_mode="dontAsk",
-                    tools=["Read", "Edit", "Glob", "Grep", "Bash", "WebFetch"]
+                    permission_mode="bypassPermissions",
+                    tools=["Read", "Edit", "Glob", "Grep", "Bash", "WebFetch"],
+                    cwd=AGENT_CWD,
                 ),
         ):
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
 
-    result = await run()
+    result = await run_with_retry(run, "code_change_validator")
     if not result:
         raise RuntimeError("code_changer returned no result")
 
-    json_result = json.loads(result)
+    print("RAW RESULT [code_change_validator]:", repr(result))
+    json_result = json.loads(strip_json_markdown(result))
 
     return {"global_messages": [{"node": "code_changer", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
@@ -52,7 +55,7 @@ async def code_change_validator(state: State):
 
 
 async def code_change_validator_routing(state: State):
-    system_parts = []
+    system_parts = [CODE_CHANGE_VALIDATOR_PATH_PROMPT]
     prompt_parts = []
 
     add_task_list(state=state, input_list=prompt_parts)
@@ -66,16 +69,16 @@ async def code_change_validator_routing(state: State):
         async for message in query(
                 prompt=prompt,
                 options=ClaudeAgentOptions(
-                    model=MODEL_NAME,
+                    model=ROUTING_MODEL,
                     system_prompt=system,
-                    permission_mode="dontAsk",
+                    permission_mode="bypassPermissions",
                 ),
         ):
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
 
-    result = await run()
+    result = await run_with_retry(run, "code_change_validator_routing")
     if not result:
         raise RuntimeError("code_change_validator_routing returned no result")
 

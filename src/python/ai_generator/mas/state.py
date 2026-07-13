@@ -3,7 +3,7 @@ from typing import TypedDict, Annotated, List
 
 from besser.BUML.metamodel.structural import DomainModel
 
-from python.mas.types import GlobalMessage, Task, ProposedEnvironmentalChange, Issue
+from python.ai_generator.mas.types import GlobalMessage, Task, ProposedEnvironmentalChange, Issue
 
 
 class State(TypedDict):
