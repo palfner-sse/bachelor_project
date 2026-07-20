@@ -1,3 +1,7 @@
+"""
+Orchestrator Agent as described in 6.2.2.1.
+"""
+
 import json
 
 from langgraph.graph import END
@@ -9,8 +13,20 @@ from python.ai_generator.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, O
 from python.ai_generator.mas.agents.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
 from python.ai_generator.mas.state import State
 
+"""
+Orchestrator Agents runnable node function
+
+Args:
+    state : State - Multiagent System State
+
+Return:
+    global_messages         : Agents Global Message update
+    task_list               : Updated task list with assignments for subsequent agents
+    orchestrator_history    : Agents internal Dialog between invocations
+"""
 
 async def orchestrator(state: State):
+    # Adds the required information from the state to the system and user prompts.
     system_parts = [ORCHESTRATOR_PROMPT, BUML_DOKUMENTATION]
     prompt_parts = []
 
@@ -23,6 +39,7 @@ async def orchestrator(state: State):
     system = "\n\n".join(system_parts)
     prompt = "\n\n".join(prompt_parts)
 
+    # Asynchronous agent call function.
     async def run():
         result = None
         async for message in query(
@@ -39,11 +56,14 @@ async def orchestrator(state: State):
                 result = message.result
         return result
 
+    # Agent call with appropriate prompts and repetition in the event of failure.
     result = await run_with_retry(run, "orchestrator")
     if not result:
         raise RuntimeError("Orchestrator returned no result")
 
     print("RAW RESULT [orchestrator]:", repr(result))
+
+    # JSON extraction from the agent response.
     json_result = json.loads(strip_json_markdown(result))
 
     return {"global_messages": [{"node": "orchestrator", "message": json_result["message"]}],
@@ -52,7 +72,18 @@ async def orchestrator(state: State):
             "orchestrator_history": json_result["orchestrator_history"]}
 
 
+"""
+Routing function of the Orchestrator Agent, which determines which agent to route to next
+based on the current task list and global messages.
+
+Args:
+    state : State - Multiagent System State
+
+Return:
+    str : Next node name to route to
+"""
 async def orchestrator_path(state: State):
+    # Adds the required information from the state to the system and user prompts.
     system_parts = [ORCHESTRATOR_PATH_PROMPT]
     prompt_parts = []
 
@@ -62,6 +93,7 @@ async def orchestrator_path(state: State):
     system = "\n\n".join(system_parts)
     prompt = "\n\n".join(prompt_parts)
 
+    # Asynchronous agent call function.
     async def run():
         result = None
         async for message in query(
@@ -78,12 +110,13 @@ async def orchestrator_path(state: State):
                 result = message.result
         return result
 
+    # Agent call with appropriate prompts and repetition in the event of failure.
     result = await run_with_retry(run, "orchestrator_path")
     if not result:
         raise RuntimeError("Orchestrator_path returned no result")
 
     return result.strip()
 
-
+#Agent paths map used to determine the graph structure for conditional edges.
 orchestrator_path_map = {"model_diff_change_analyzer": "model_diff_change_analyzer",
                          "code_change_planer": "code_change_planer", "code_changer": "code_changer", "finish": END}

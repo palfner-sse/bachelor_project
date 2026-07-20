@@ -14,7 +14,6 @@ from python.ai_generator.mas.state import State
 
 # TODO make the agents only use a provided path
 # TODO instead of raising error when there is no return or the json format it not correct i need to write it in the global messages instead of raising a exception
-# TODO make code_change_validator also be able to use git to not only see after the change but also what changed and the before
 
 def create_graph():
     mas_graph = StateGraph(State)

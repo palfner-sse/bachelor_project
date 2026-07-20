@@ -1,3 +1,7 @@
+"""
+Model Diff Change Analyzer Agent as described in 6.2.2.2.
+"""
+
 import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
@@ -8,8 +12,20 @@ from python.ai_generator.mas.agents.util import add_agent_history, add_model_dif
     add_proposed_environmental_changes, add_issues, strip_json_markdown, run_with_retry
 from python.ai_generator.mas.state import State
 
+"""
+Model Diff Change Analyzer Agents runnable node function
+
+Args:
+    state : State - Multiagent System State
+
+Return:
+    global_messages                      : Agents Global Message update
+    proposed_environmental_changes       : Agents proposed changes to the environment based on the model diff
+    model_diff_change_analyzer_history   : Agents internal Dialog between invocations
+"""
 
 async def model_diff_change_analyzer(state: State):
+    # Adds the required information from the state to the system and user prompts.
     system_parts = [MODEL_DIFF_CHANGE_ANALYZER_PROMPT, BUML_DOKUMENTATION]
     prompt_parts = []
 
@@ -25,6 +41,7 @@ async def model_diff_change_analyzer(state: State):
     system = "\n\n".join(system_parts)
     prompt = "\n\n".join(prompt_parts)
 
+    # Asynchronous agent call function.
     async def run():
         result = None
         async for message in query(
@@ -41,11 +58,14 @@ async def model_diff_change_analyzer(state: State):
                 result = message.result
         return result
 
+    # Agent call with appropriate prompts and repetition in the event of failure.
     result = await run_with_retry(run, "model_diff_change_analyzer")
     if not result:
         raise RuntimeError("model_diff_change_analyzer returned no result")
 
     print("RAW RESULT [model_diff_change_analyzer]:", repr(result))
+
+    # JSON extraction from the agent response.
     json_result = json.loads(strip_json_markdown(result))
 
     return {"global_messages": [{"node": "model_diff_change_analyzer", "message": json_result["message"]}],

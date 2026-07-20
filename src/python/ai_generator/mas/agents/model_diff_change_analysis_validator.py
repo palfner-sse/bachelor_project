@@ -1,3 +1,7 @@
+"""
+Model Diff Change Analysis Validator Agent as described in 6.2.2.3.
+"""
+
 import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
@@ -9,8 +13,20 @@ from python.ai_generator.mas.agents.util import add_agent_history, add_proposed_
     add_global_messages, add_task_list, add_models, add_issues, strip_json_markdown, run_with_retry
 from python.ai_generator.mas.state import State
 
+"""
+Model Diff Change Analysis Validator Agents runnable node function
+
+Args:
+    state : State - Multiagent System State
+
+Return:
+    global_messages                                 : Agents Global Message update
+    issues                                          : Agents proposed issues in the work proposed by the Model Diff Change Analyzer Agent
+    model_diff_change_analysis_validator_history    : Agents internal Dialog between invocations
+"""
 
 async def model_diff_change_analysis_validator(state: State):
+    # Adds the required information from the state to the system and user prompts.
     system_parts = [MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PROMPT, BUML_DOKUMENTATION]
     prompt_parts = []
 
@@ -25,6 +41,7 @@ async def model_diff_change_analysis_validator(state: State):
     system = "\n\n".join(system_parts)
     prompt = "\n\n".join(prompt_parts)
 
+    # Asynchronous agent call function.
     async def run():
         result = None
         async for message in query(
@@ -41,11 +58,14 @@ async def model_diff_change_analysis_validator(state: State):
                 result = message.result
         return result
 
+    # Agent call with appropriate prompts and repetition in the event of failure.
     result = await run_with_retry(run, "model_diff_change_analysis_validator")
     if not result:
         raise RuntimeError("model_diff_change_analysis_validator returned no result")
 
     print("RAW RESULT [model_diff_change_analysis_validator]:", repr(result))
+
+    # JSON extraction from the agent response.
     json_result = json.loads(strip_json_markdown(result))
 
     return {"global_messages": [{"node": "model_diff_change_analysis_validator", "message": json_result["message"]}],
@@ -54,7 +74,18 @@ async def model_diff_change_analysis_validator(state: State):
             "model_diff_change_analysis_validator_history": json_result["model_diff_change_analysis_validator_history"]}
 
 
+"""
+Routing function of the Model Diff Change Analysis Validator Agent, which determines whether the previous agent must
+revise its work or whether routing can return to the orchestrator because the previous work has been validated.
+
+Args:
+    state : State - Multiagent System State
+
+Return:
+    str : Next node name to route to
+"""
 async def model_diff_change_analysis_validator_router(state: State):
+    # Adds the required information from the state to the system and user prompts.
     system_parts = [MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PATH_PROMPT]
     prompt_parts = []
 
@@ -64,6 +95,7 @@ async def model_diff_change_analysis_validator_router(state: State):
     system = "\n\n".join(system_parts)
     prompt = "\n\n".join(prompt_parts)
 
+    # Asynchronous agent call function.
     async def run():
         result = None
         async for message in query(
@@ -80,12 +112,13 @@ async def model_diff_change_analysis_validator_router(state: State):
                 result = message.result
         return result
 
+    # Agent call with appropriate prompts and repetition in the event of failure.
     result = await run_with_retry(run, "model_diff_change_analysis_validator_router")
     if not result:
         raise RuntimeError("Orchestrator_path returned no result")
 
     return result.strip()
 
-
+#Agent paths map used to determine the graph structure for conditional edges.
 model_diff_change_analysis_validator_path_map = {"orchestrator": "orchestrator",
                                                  "model_diff_change_analyzer": "model_diff_change_analyzer"}
