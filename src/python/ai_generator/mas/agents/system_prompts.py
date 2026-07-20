@@ -1,4 +1,9 @@
-# TODO make orchestrator dont return diff or python code 
+"""
+System prompts for the BUML migration multi-agent system.
+
+Each agent has a main prompt and optionally a routing path prompt (_PATH_PROMPT)
+that decides which agent to invoke next based on the validator outcome.
+"""
 
 ORCHESTRATOR_PROMPT = """
 You are the Orchestrator in a multi-agent system that automates codebase migration in response to changes in a BUML (B-UML/BESSER) model.

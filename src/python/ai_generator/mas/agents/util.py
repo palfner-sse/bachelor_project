@@ -3,7 +3,15 @@ import re
 
 from python.ai_generator.mas.state import State
 
+"""
+Function to run async function with a retry if the passed function returns an exception mostly connection problems.
 
+Args:
+    run_fn : function   - function to run
+    agent_name : string - name of the agent which is needed for a possible error message
+    max_retries : int   - amount of times to rerun run_fn
+    base_delay : float  - amount of for the first retry which is multiplied with the amount of retry
+"""
 async def run_with_retry(run_fn, agent_name: str, max_retries: int = 3, base_delay: float = 10.0):
     for attempt in range(max_retries + 1):
         try:
@@ -18,7 +26,16 @@ async def run_with_retry(run_fn, agent_name: str, max_retries: int = 3, base_del
             else:
                 raise
 
+"""
+Extracts a JSON Object string from a string that can be read by json.loads(). 
+This is necessary because large language models not always return only JSON, even if tooled to do so.  
 
+Args:
+    text : str  - string to extract JSON Object strings from 
+    
+Return:
+    str - cleand json Object string
+"""
 def strip_json_markdown(text: str) -> str:
     text = text.strip()
     # Extract from ```json ... ``` block if present
@@ -36,6 +53,15 @@ def strip_json_markdown(text: str) -> str:
     return _escape_control_chars_in_strings(text)
 
 
+"""
+Converts wrongly escaped characters in JSON Object strings from /<char> to //<char> because the first on is not readable by json.loads()
+
+Args:
+    json_text : str  - string to escape chars in 
+
+Return:
+    str - converted json Object string
+"""
 def _escape_control_chars_in_strings(json_text: str) -> str:
     result = []
     inside_string = False
@@ -80,14 +106,14 @@ def _escape_control_chars_in_strings(json_text: str) -> str:
     return ''.join(result)
 
 
-def extract_route(text: str, valid_routes: list[str]) -> str:
-    text_lower = text.lower()
-    for route in valid_routes:
-        if route in text_lower:
-            return route
-    raise RuntimeError(f"Could not extract a valid route from model output. Valid: {valid_routes}. Got: {repr(text)}")
+"""
+Adds global messages to a list of strings. 
 
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of string the global message state needs to be added to
 
+"""
 def add_global_messages(state: State, input_list: list):
     if state["global_messages"]:
         global_messages = "\n".join(f"[{m['node']}]: {m['message']}" for m in state["global_messages"])
@@ -96,6 +122,14 @@ def add_global_messages(state: State, input_list: list):
         input_list.append("No global messages")
 
 
+"""
+Adds the agent's invocation history to a list of strings.
+
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of strings the agent history needs to be added to
+    agent_name : str    - Name of the agent whose history should be retrieved from state
+"""
 def add_agent_history(state: State, input_list: list, agent_name: str):
     state_name = f"{agent_name}_history"
 
@@ -106,6 +140,13 @@ def add_agent_history(state: State, input_list: list, agent_name: str):
         input_list.append("No agent history")
 
 
+"""
+Adds the current task list to a list of strings.
+
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of strings the task list needs to be added to
+"""
 def add_task_list(state: State, input_list: list):
     if state["task_list"]:
         task_list = "\n".join(
@@ -116,6 +157,13 @@ def add_task_list(state: State, input_list: list):
         input_list.append("No task list")
 
 
+"""
+Adds the raw model diff string to a list of strings.
+
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of strings the model diff needs to be added to
+"""
 def add_model_diff(state: State, input_list: list):
     if state["model_diff"]:
         input_list.append(f"Model Diff:\n{state['model_diff']}")
@@ -123,6 +171,13 @@ def add_model_diff(state: State, input_list: list):
         input_list.append("No model diff")
 
 
+"""
+Adds both the model before and model after to a list of strings.
+
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of strings the models need to be added to
+"""
 def add_models(state: State, input_list: list):
     if state["model_before"]:
         input_list.append(f"Model Before:\n{state['model_before']}")
@@ -135,6 +190,13 @@ def add_models(state: State, input_list: list):
         input_list.append("No model after")
 
 
+"""
+Adds the proposed environmental changes produced by the analyzer to a list of strings.
+
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of strings the proposed changes need to be added to
+"""
 def add_proposed_environmental_changes(state: State, input_list: list):
     if state["proposed_environmental_changes"]:
         input_list.append(f"Proposed Environmental Changes:\n{state['proposed_environmental_changes']}")
@@ -142,6 +204,13 @@ def add_proposed_environmental_changes(state: State, input_list: list):
         input_list.append("No proposed environmental changes")
 
 
+"""
+Adds the list of validation issues raised by a validator agent to a list of strings.
+
+Args:
+    state : State       - Multiagent System State
+    input_list : List   - List of strings the issues need to be added to
+"""
 def add_issues(state: State, input_list: list):
     if state["issues"]:
         lines = [f"- Issue: {i['issue']}\n  Source: {i['source']}\n  Reasoning: {i['reasoning']}" for i in state["issues"]]
