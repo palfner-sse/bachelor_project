@@ -4,6 +4,7 @@ import importlib
 from python.ai_generator.ai_generator import run_ai_generator
 from python.besser_java_generator.java_generator import JavaGenerator
 
+
 """
 Dynamically loads and executes a B-UML model Python file and returns its domain_model variable.
 
@@ -18,6 +19,7 @@ def load_domain_model(path: str):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.domain_model
+
 
 """
 Entry point for the toolchain.
