@@ -1,7 +1,23 @@
 import argparse
-from python.ai_generator.ai_generator import run as run_ai, load_domain_model
+import importlib
+
+from python.ai_generator.ai_generator import run_ai_generator
 from python.besser_java_generator.java_generator import JavaGenerator
 
+"""
+Dynamically loads and executes a B-UML model Python file and returns its domain_model variable.
+
+Args:
+    path : str  - Absolute or relative path to the model.py file
+
+Return:
+    DomainModel - The domain_model object defined in the loaded file
+"""
+def load_domain_model(path: str):
+    spec = importlib.util.spec_from_file_location("model", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.domain_model
 
 """
 Entry point for the toolchain.
@@ -39,4 +55,4 @@ if __name__ == "__main__":
     else:
         if not args.after:
             parser.error("-a/--after is required when using the AI generator")
-        run_ai(args.before, args.after, args.codebase)
+        run_ai_generator(args.before, args.after, args.codebase)

@@ -1,25 +1,9 @@
 import asyncio
 import subprocess
-import importlib.util
 
 from python import config
 from python.ai_generator.mas.graph import graph
-
-"""
-Dynamically loads and executes a B-UML model Python file and returns its domain_model variable.
-
-Args:
-    path : str  - Absolute or relative path to the model.py file
-
-Return:
-    DomainModel - The domain_model object defined in the loaded file
-"""
-def load_domain_model(path: str):
-    spec = importlib.util.spec_from_file_location("model", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.domain_model
-
+from python.main import load_domain_model
 
 """
 Entry point for the AI generator. Computes the diff between two B-UML model files
@@ -30,7 +14,7 @@ Args:
     model_after_path  : str  - Path to the B-UML model file after the change
     code_base_path    : str  - Path to the codebase directory the agents will read and modify
 """
-def run(model_before_path: str, model_after_path: str, code_base_path: str):
+def run_ai_generator(model_before_path: str, model_after_path: str, code_base_path: str):
     config.AGENT_CWD = code_base_path
 
     diff = subprocess.run(
