@@ -30,7 +30,7 @@ When a B-UML model changes, the AI generator computes the diff between the befor
 Requires Python 3.12+ and [uv](https://github.com/astral-sh/uv).
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/palfner-sse/bachelor_project.git
 cd bachelor_project
 uv pip install -e .
 ```
