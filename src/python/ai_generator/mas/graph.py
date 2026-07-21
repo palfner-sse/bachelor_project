@@ -12,7 +12,6 @@ from python.ai_generator.mas.agents.model_diff_change_analyzer import model_diff
 from python.ai_generator.mas.agents.orchestrator import orchestrator, orchestrator_path, orchestrator_path_map
 from python.ai_generator.mas.state import State
 
-# TODO make the agents only use a provided path
 # TODO instead of raising error when there is no return or the json format it not correct i need to write it in the global messages instead of raising a exception
 
 def create_graph():
@@ -42,6 +41,5 @@ def create_graph():
     mas_graph.add_edge(start_key="model_diff_change_analyzer", end_key="model_diff_change_analysis_validator")
 
     return mas_graph.compile()
-
 
 graph = create_graph()
