@@ -50,6 +50,7 @@ async def code_change_planer(state: State):
                     cwd=AGENT_CWD,
                 ),
         ):
+            # Prints all SDK messages (assistant text, tool calls, tool results, final result)
             print("SDK MESSAGE [code_change_planer]:", type(message).__name__, repr(message))
             if isinstance(message, ResultMessage):
                 result = message.result

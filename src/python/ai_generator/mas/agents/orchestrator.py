@@ -52,6 +52,8 @@ async def orchestrator(state: State):
                     cwd=AGENT_CWD,
                 ),
         ):
+            # Prints all SDK messages (assistant text, tool calls, tool results, final result)
+            print("SDK MESSAGE [orchestrator]:", type(message).__name__, repr(message))
             if isinstance(message, ResultMessage):
                 result = message.result
         return result
