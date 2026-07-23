@@ -14,6 +14,17 @@ from python.ai_generator.mas.state import State
 
 # TODO instead of raising error when there is no return or the json format it not correct i need to write it in the global messages instead of raising a exception
 
+"""
+Builds and compiles the LangGraph multi-agent system (MAS) graph.
+
+Registers all agent nodes and wires them together with directed and
+conditional edges. The orchestrator is set as the entry point and routes
+execution to the appropriate sub-agents based on the current state.
+A render of the graph can be found in figure 6.1.
+
+Return:
+    CompiledStateGraph - The compiled LangGraph graph ready for execution.
+"""
 def create_graph():
     mas_graph = StateGraph(State)
 
