@@ -40,7 +40,7 @@ class JavaGenerator(GeneratorInterface):
         for class_obj in self.model.classes_sorted_by_inheritance():
             file_path = self.build_generation_path(file_name=class_obj.name + ".java")
             templates_path = os.path.join(os.path.dirname(
-                os.path.abspath(__file__)), "templates")
+                os.path.abspath(__file__)), "..", "..", "jinja2")
             env = Environment(loader=FileSystemLoader(
                 templates_path), trim_blocks=True, lstrip_blocks=True, extensions=['jinja2.ext.do'])
             template = env.get_template('java_template.py.j2')

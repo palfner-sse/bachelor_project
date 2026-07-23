@@ -91,8 +91,8 @@ async def code_change_validator_routing(state: State):
     system_parts = [CODE_CHANGE_VALIDATOR_PATH_PROMPT]
     prompt_parts = []
 
-    add_task_list(state=state, input_list=prompt_parts)
     add_global_messages(state=state, input_list=prompt_parts)
+    add_issues(state=state, input_list=prompt_parts)
 
     system = "\n\n".join(system_parts)
     prompt = "\n\n".join(prompt_parts)

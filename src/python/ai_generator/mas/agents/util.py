@@ -192,7 +192,7 @@ def add_models(state: State, input_list: list):
 
 
 """
-Adds the proposed environmental changes produced by the analyzer to a list of strings.
+Adds the proposed environmental changes to a list of strings.
 
 Args:
     state : State       - Multiagent System State
