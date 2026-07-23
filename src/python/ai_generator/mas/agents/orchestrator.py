@@ -10,7 +10,7 @@ from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
 from python.ai_generator.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from python.ai_generator.mas.agents.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
+from python.ai_generator.mas.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
 from python.ai_generator.mas.state import State
 
 """

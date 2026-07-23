@@ -8,7 +8,7 @@ from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 from python.config import AGENT_MODEL, AGENT_CWD
 from python.ai_generator.mas.agents.system_prompts import CODE_CHANGER_PROMPT
-from python.ai_generator.mas.agents.util import add_agent_history, add_task_list, add_global_messages, add_issues, strip_json_markdown, run_with_retry
+from python.ai_generator.mas.util import add_agent_history, add_task_list, add_global_messages, add_issues, strip_json_markdown, run_with_retry
 from python.ai_generator.mas.state import State
 
 """
