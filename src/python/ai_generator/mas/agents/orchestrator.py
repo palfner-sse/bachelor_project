@@ -59,14 +59,11 @@ async def orchestrator(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "orchestrator")
-    if not result:
+    json_result = await run_with_retry(run, "orchestrator")
+    if not json_result:
         raise RuntimeError("Orchestrator returned no result")
 
-    print("RAW RESULT [orchestrator]:", repr(result))
-
-    # JSON extraction from the agent response.
-    json_result = json.loads(strip_json_markdown(result))
+    print("RESULT [orchestrator]:", repr(json_result))
 
     return {"global_messages": [{"node": "orchestrator", "message": json_result["message"]}],
             "task_list": [{"task": t["task"], "reasoning": t["reasoning"], "agent": t["agent"]} for t in
@@ -113,11 +110,11 @@ async def orchestrator_path(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "orchestrator_path")
-    if not result:
+    json_result = await run_with_retry(run, "orchestrator_path")
+    if not json_result:
         raise RuntimeError("Orchestrator_path returned no result")
 
-    return result.strip()
+    return json_result.get("next_agent", "").strip()
 
 #Agent paths map used to determine the graph structure for conditional edges.
 orchestrator_path_map = {"model_diff_change_analyzer": "model_diff_change_analyzer",

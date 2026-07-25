@@ -61,14 +61,11 @@ async def model_diff_change_analysis_validator(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "model_diff_change_analysis_validator")
-    if not result:
+    json_result = await run_with_retry(run, "model_diff_change_analysis_validator")
+    if not json_result:
         raise RuntimeError("model_diff_change_analysis_validator returned no result")
 
-    print("RAW RESULT [model_diff_change_analysis_validator]:", repr(result))
-
-    # JSON extraction from the agent response.
-    json_result = json.loads(strip_json_markdown(result))
+    print("RESULT [model_diff_change_analysis_validator]:", repr(json_result))
 
     return {"global_messages": [{"node": "model_diff_change_analysis_validator", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
@@ -115,11 +112,11 @@ async def model_diff_change_analysis_validator_router(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "model_diff_change_analysis_validator_router")
-    if not result:
-        raise RuntimeError("Orchestrator_path returned no result")
+    json_result = await run_with_retry(run, "model_diff_change_analysis_validator_router")
+    if not json_result:
+        raise RuntimeError("model_diff_change_analysis_validator_router returned no result")
 
-    return result.strip()
+    return json_result.get("next_agent", "").strip()
 
 #Agent paths map used to determine the graph structure for conditional edges.
 model_diff_change_analysis_validator_path_map = {"orchestrator": "orchestrator",

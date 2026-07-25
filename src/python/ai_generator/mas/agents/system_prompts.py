@@ -101,9 +101,13 @@ Based on the current task list and global messages, decide which agent should be
 
 ## Output format
 
-Respond with only the agent name. No markdown, no explanation, no JSON — just the name.
+You must always respond with a single valid JSON object. No markdown, no explanation, only JSON.
 
-The response must be exactly one of: model_diff_change_analyzer, code_change_planer, code_changer, finish.
+{
+  "next_agent": "<agent name>"
+}
+
+The next_agent must be exactly one of: model_diff_change_analyzer, code_change_planer, code_changer, finish.
 """
 
 MODEL_DIFF_CHANGE_ANALYZER_PROMPT = """
@@ -254,9 +258,13 @@ the issues list.
 
 ## Output format
 
-Respond with only the agent name. No markdown, no explanation, no JSON — just the name.
+You must always respond with a single valid JSON object. No markdown, no explanation, only JSON.
 
-The response must be exactly one of: orchestrator, model_diff_change_analyzer.
+{
+  "next_agent": "<agent name>"
+}
+
+The next_agent must be exactly one of: orchestrator, model_diff_change_analyzer.
 """
 
 CODE_CHANGE_PLANER_PROMPT = """
@@ -518,9 +526,13 @@ the issues list.
 
 ## Output format
 
-Respond with only the agent name. No markdown, no explanation, no JSON — just the name.
+You must always respond with a single valid JSON object. No markdown, no explanation, only JSON.
 
-The response must be exactly one of: orchestrator, code_change_planer.
+{
+  "next_agent": "<agent name>"
+}
+
+The next_agent must be exactly one of: orchestrator, code_change_planer.
 """
 
 CODE_CHANGE_VALIDATOR_PROMPT = """
@@ -605,9 +617,13 @@ the issues list.
 
 ## Output format
 
-Respond with only the agent name. No markdown, no explanation, no JSON — just the name.
+You must always respond with a single valid JSON object. No markdown, no explanation, only JSON.
 
-The response must be exactly one of: orchestrator, code_changer.
+{
+  "next_agent": "<agent name>"
+}
+
+The next_agent must be exactly one of: orchestrator, code_changer.
 """
 
 BUML_DOKUMENTATION = """

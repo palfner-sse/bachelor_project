@@ -61,16 +61,13 @@ async def code_change_validator(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "code_change_validator")
-    if not result:
-        raise RuntimeError("code_changer returned no result")
+    json_result = await run_with_retry(run, "code_change_validator")
+    if not json_result:
+        raise RuntimeError("code_change_validator returned no result")
 
-    print("RAW RESULT [code_change_validator]:", repr(result))
+    print("RESULT [code_change_validator]:", repr(json_result))
 
-    # JSON extraction from the agent response.
-    json_result = json.loads(strip_json_markdown(result))
-
-    return {"global_messages": [{"node": "code_changer", "message": json_result["message"]}],
+    return {"global_messages": [{"node": "code_change_validator", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
                        for i in json_result.get("issues", [])] if isinstance(json_result.get("issues"), list) else [],
             "code_change_validator_history": json_result["code_change_validator_history"]}
@@ -113,11 +110,11 @@ async def code_change_validator_routing(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "code_change_validator_routing")
-    if not result:
+    json_result = await run_with_retry(run, "code_change_validator_routing")
+    if not json_result:
         raise RuntimeError("code_change_validator_routing returned no result")
 
-    return result.strip()
+    return json_result.get("next_agent", "").strip()
 
 #Agent paths map used to determine the graph structure for conditional edges.
 code_change_validator_path_map = {"orchestrator": "orchestrator", "code_changer": "code_changer"}

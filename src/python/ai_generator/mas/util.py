@@ -1,10 +1,12 @@
 import asyncio
+import json
 import re
 
 from python.ai_generator.mas.state import State
 
 """
-Function to run async function with a retry if the passed function returns an exception mostly connection problems.
+Function to run async function with a retry if the passed function returns an exception (API errors, connection problems)
+or returns invalid JSON. Validates JSON response using strip_json_markdown and retries if parsing fails.
 
 Args:
     run_fn : function   - function to run
@@ -15,13 +17,31 @@ Args:
 async def run_with_retry(run_fn, agent_name: str, max_retries: int = 3, base_delay: float = 10.0):
     for attempt in range(max_retries + 1):
         try:
-            return await run_fn()
+            result = await run_fn()
+
+            # Validate and parse JSON response
+            if result:
+                try:
+                    json_result = json.loads(strip_json_markdown(result))
+                    return json_result
+                except (json.JSONDecodeError, ValueError) as json_err:
+                    error_msg = f"Invalid JSON response: {str(json_err)}"
+                    if attempt < max_retries:
+                        delay = base_delay * (2 ** attempt)
+                        print(f"[{agent_name}] JSON parse error (attempt {attempt + 1}/{max_retries + 1}): {error_msg}. Retrying in {delay:.0f}s...")
+                        await asyncio.sleep(delay)
+                        continue
+                    else:
+                        raise ValueError(f"Failed to parse JSON after {max_retries + 1} attempts: {error_msg}")
+
         except Exception as e:
             error_msg = str(e)
             is_api_error = "Claude Code returned an error result" in error_msg
-            if attempt < max_retries and is_api_error:
+            is_json_error = isinstance(e, ValueError) and "Failed to parse JSON" in error_msg
+
+            if attempt < max_retries and (is_api_error or is_json_error):
                 delay = base_delay * (2 ** attempt)
-                print(f"[{agent_name}] API error (attempt {attempt + 1}/{max_retries + 1}): {error_msg}. Retrying in {delay:.0f}s...")
+                print(f"[{agent_name}] Error (attempt {attempt + 1}/{max_retries + 1}): {error_msg}. Retrying in {delay:.0f}s...")
                 await asyncio.sleep(delay)
             else:
                 raise

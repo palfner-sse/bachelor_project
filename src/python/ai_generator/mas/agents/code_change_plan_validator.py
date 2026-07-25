@@ -60,14 +60,11 @@ async def code_change_plan_validator(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "code_change_plan_validator")
-    if not result:
+    json_result = await run_with_retry(run, "code_change_plan_validator")
+    if not json_result:
         raise RuntimeError("code_change_plan_validator returned no result")
 
-    print("RAW RESULT [code_change_plan_validator]:", repr(result))
-
-    # JSON extraction from the agent response.
-    json_result = json.loads(strip_json_markdown(result))
+    print("RESULT [code_change_plan_validator]:", repr(json_result))
 
     return {"global_messages": [{"node": "code_change_plan_validator", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
@@ -114,11 +111,11 @@ async def code_change_plan_validator_routing(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "code_change_plan_validator_routing")
-    if not result:
+    json_result = await run_with_retry(run, "code_change_plan_validator_routing")
+    if not json_result:
         raise RuntimeError("code_change_plan_validator_routing returned no result")
 
-    return result.strip()
+    return json_result.get("next_agent", "").strip()
 
 #Agent paths map used to determine the graph structure for conditional edges.
 code_change_plan_validator_path_map = {"orchestrator" : "orchestrator", "code_change_planer" : "code_change_planer"}

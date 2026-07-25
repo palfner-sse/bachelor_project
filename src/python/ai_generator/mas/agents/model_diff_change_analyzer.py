@@ -61,14 +61,11 @@ async def model_diff_change_analyzer(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "model_diff_change_analyzer")
-    if not result:
+    json_result = await run_with_retry(run, "model_diff_change_analyzer")
+    if not json_result:
         raise RuntimeError("model_diff_change_analyzer returned no result")
 
-    print("RAW RESULT [model_diff_change_analyzer]:", repr(result))
-
-    # JSON extraction from the agent response.
-    json_result = json.loads(strip_json_markdown(result))
+    print("RESULT [model_diff_change_analyzer]:", repr(json_result))
 
     return {"global_messages": [{"node": "model_diff_change_analyzer", "message": json_result["message"]}],
             "proposed_environmental_changes": [{"proposed_change": c["proposed_change"], "source": c["source"],

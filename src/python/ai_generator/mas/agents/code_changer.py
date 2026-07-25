@@ -56,14 +56,11 @@ async def code_changer(state: State):
         return result
 
     # Agent call with appropriate prompts and repetition in the event of failure.
-    result = await run_with_retry(run, "code_changer")
-    if not result:
+    json_result = await run_with_retry(run, "code_changer")
+    if not json_result:
         raise RuntimeError("code_changer returned no result")
 
-    print("RAW RESULT [code_changer]:", repr(result))
-
-    # JSON extraction from the agent response.
-    json_result = json.loads(strip_json_markdown(result))
+    print("RESULT [code_changer]:", repr(json_result))
 
     return {"global_messages": [{"node": "code_changer", "message": json_result["message"]}],
             "code_changer_history": json_result["code_changer_history"]}
