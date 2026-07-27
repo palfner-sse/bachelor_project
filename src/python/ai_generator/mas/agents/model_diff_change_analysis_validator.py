@@ -67,10 +67,14 @@ async def model_diff_change_analysis_validator(state: State):
 
     print("RESULT [model_diff_change_analysis_validator]:", repr(json_result))
 
+    history = json_result.get("model_diff_change_analysis_validator_history", [])
+    if isinstance(history, str):
+        history = [history]
+
     return {"global_messages": [{"node": "model_diff_change_analysis_validator", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
                        for i in json_result.get("issues", [])] if isinstance(json_result.get("issues"), list) else [],
-            "model_diff_change_analysis_validator_history": json_result["model_diff_change_analysis_validator_history"]}
+            "model_diff_change_analysis_validator_history": history}
 
 
 """

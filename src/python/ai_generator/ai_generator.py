@@ -3,7 +3,6 @@ import subprocess
 
 from python import config
 from python.ai_generator.mas.graph import graph
-from python.main import load_domain_model
 
 """
 Entry point for the AI generator. Computes the diff between two B-UML model files
@@ -15,6 +14,8 @@ Args:
     code_base_path    : str  - Path to the codebase directory the agents will read and modify
 """
 def run_ai_generator(model_before_path: str, model_after_path: str, code_base_path: str):
+    from python.main import load_domain_model
+
     config.AGENT_CWD = code_base_path
 
     diff = subprocess.run(

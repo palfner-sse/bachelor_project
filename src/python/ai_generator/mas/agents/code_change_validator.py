@@ -67,10 +67,14 @@ async def code_change_validator(state: State):
 
     print("RESULT [code_change_validator]:", repr(json_result))
 
+    history = json_result.get("code_change_validator_history", [])
+    if isinstance(history, str):
+        history = [history]
+
     return {"global_messages": [{"node": "code_change_validator", "message": json_result["message"]}],
             "issues": [{"issue": i["issue"], "source": i["source"], "reasoning": i["reasoning"]}
                        for i in json_result.get("issues", [])] if isinstance(json_result.get("issues"), list) else [],
-            "code_change_validator_history": json_result["code_change_validator_history"]}
+            "code_change_validator_history": history}
 
 
 """

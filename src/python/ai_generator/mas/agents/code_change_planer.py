@@ -63,5 +63,9 @@ async def code_change_planer(state: State):
 
     print("RESULT [code_change_planer]:", repr(json_result))
 
+    history = json_result.get("code_change_planer_history", [])
+    if isinstance(history, str):
+        history = [history]
+
     return {"global_messages": [{"node": "code_change_planer", "message": json_result["message"]}],
-            "code_change_planer_history": json_result["code_change_planer_history"]}
+            "code_change_planer_history": history}

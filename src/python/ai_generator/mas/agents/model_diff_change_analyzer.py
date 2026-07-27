@@ -67,8 +67,12 @@ async def model_diff_change_analyzer(state: State):
 
     print("RESULT [model_diff_change_analyzer]:", repr(json_result))
 
+    history = json_result.get("model_diff_change_analyzer_history", [])
+    if isinstance(history, str):
+        history = [history]
+
     return {"global_messages": [{"node": "model_diff_change_analyzer", "message": json_result["message"]}],
             "proposed_environmental_changes": [{"proposed_change": c["proposed_change"], "source": c["source"],
                                                 "reasoning": c["reasoning"]}
                                                for c in json_result["proposed_environmental_changes"]],
-            "model_diff_change_analyzer_history": json_result["model_diff_change_analyzer_history"]}
+            "model_diff_change_analyzer_history": history}

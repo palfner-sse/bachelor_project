@@ -65,10 +65,14 @@ async def orchestrator(state: State):
 
     print("RESULT [orchestrator]:", repr(json_result))
 
+    history = json_result.get("orchestrator_history", [])
+    if isinstance(history, str):
+        history = [history]
+
     return {"global_messages": [{"node": "orchestrator", "message": json_result["message"]}],
             "task_list": [{"task": t["task"], "reasoning": t["reasoning"], "agent": t["agent"]} for t in
                           json_result["task_list"]],
-            "orchestrator_history": json_result["orchestrator_history"]}
+            "orchestrator_history": history}
 
 
 """

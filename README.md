@@ -48,7 +48,7 @@ python src/python/main.py -b <model.py> -c <output_dir> -j
 ```
 
 ### AI Generator
-Migrate an existing codebase based on a model change:
+Migrate an existing codebase based on a model change, wich works best with -c ./:
 ```bash
 python src/python/main.py -b <before_model.py> -a <after_model.py> -c <codebase_dir>
 ```
