@@ -6,11 +6,11 @@ import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import AGENT_MODEL, AGENT_CWD
-from python.ai_generator.mas.agents.system_prompts import MODEL_DIFF_CHANGE_ANALYZER_PROMPT, BUML_DOKUMENTATION
-from python.ai_generator.mas.util import add_agent_history, add_model_diff, add_task_list, add_models, add_global_messages, \
+from config import AGENT_MODEL, AGENT_CWD
+from ai_generator.mas.agents.system_prompts import MODEL_DIFF_CHANGE_ANALYZER_PROMPT, BUML_DOKUMENTATION
+from ai_generator.mas.util import add_agent_history, add_model_diff, add_task_list, add_models, add_global_messages, \
     add_proposed_environmental_changes, add_issues, strip_json_markdown, run_with_retry
-from python.ai_generator.mas.state import State
+from ai_generator.mas.state import State
 
 """
 Model Diff Change Analyzer Agents runnable node function
@@ -55,7 +55,7 @@ async def model_diff_change_analyzer(state: State):
                 ),
         ):
             # Prints all SDK messages (assistant text, tool calls, tool results, final result)
-            print("SDK MESSAGE [model_diff_change_analyzer]:", type(message).__name__, repr(message))
+            # print("SDK MESSAGE [model_diff_change_analyzer]:", type(message).__name__, repr(message))
             if isinstance(message, ResultMessage):
                 result = message.result
         return result

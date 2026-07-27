@@ -8,10 +8,10 @@ from langgraph.graph import END
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
-from python.ai_generator.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from python.ai_generator.mas.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
-from python.ai_generator.mas.state import State
+from config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
+from ai_generator.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
+from ai_generator.mas.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
+from ai_generator.mas.state import State
 
 """
 Orchestrator Agents runnable node function
@@ -53,7 +53,7 @@ async def orchestrator(state: State):
                 ),
         ):
             # Prints all SDK messages (assistant text, tool calls, tool results, final result)
-            print("SDK MESSAGE [orchestrator]:", type(message).__name__, repr(message))
+            # print("SDK MESSAGE [orchestrator]:", type(message).__name__, repr(message))
             if isinstance(message, ResultMessage):
                 result = message.result
         return result

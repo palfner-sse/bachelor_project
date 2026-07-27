@@ -1,8 +1,8 @@
 import argparse
 import importlib
 
-from python.ai_generator.ai_generator import run_ai_generator
-from python.besser_java_generator.java_generator import JavaGenerator
+from ai_generator.ai_generator import run_ai_generator
+from besser_java_generator.java_generator import JavaGenerator
 
 
 """

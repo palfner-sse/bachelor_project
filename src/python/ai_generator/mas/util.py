@@ -2,7 +2,7 @@ import asyncio
 import json
 import re
 
-from python.ai_generator.mas.state import State
+from ai_generator.mas.state import State
 
 """
 Function to run async function with a retry if the passed function returns an exception (API errors, connection problems)

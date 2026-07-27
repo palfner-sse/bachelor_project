@@ -6,11 +6,11 @@ import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
-from python.ai_generator.mas.agents.system_prompts import CODE_CHANGE_PLAN_VALIDATOR_PROMPT, CODE_CHANGE_PLAN_VALIDATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from python.ai_generator.mas.util import add_agent_history, add_global_messages, add_task_list, add_model_diff, \
+from config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
+from ai_generator.mas.agents.system_prompts import CODE_CHANGE_PLAN_VALIDATOR_PROMPT, CODE_CHANGE_PLAN_VALIDATOR_PATH_PROMPT, BUML_DOKUMENTATION
+from ai_generator.mas.util import add_agent_history, add_global_messages, add_task_list, add_model_diff, \
     add_proposed_environmental_changes, add_issues, strip_json_markdown, run_with_retry
-from python.ai_generator.mas.state import State
+from ai_generator.mas.state import State
 
 """
 Code Change Plan Validator Agents runnable node function 
@@ -49,12 +49,12 @@ async def code_change_plan_validator(state: State):
                     model=AGENT_MODEL,
                     system_prompt=system,
                     permission_mode="bypassPermissions",
-                    tools=["Read", "Edit", "Write", "Glob", "Grep", "WebFetch"],
+                    tools=["Read", "Edit", "Write", "Glob", "Grep", "Bash", "WebFetch"],
                     cwd=AGENT_CWD,
                 ),
         ):
             # Prints all SDK messages (assistant text, tool calls, tool results, final result)
-            print("SDK MESSAGE [code_change_plan_validator]:", type(message).__name__, repr(message))
+            # print("SDK MESSAGE [code_change_plan_validator]:", type(message).__name__, repr(message))
             if isinstance(message, ResultMessage):
                 result = message.result
         return result

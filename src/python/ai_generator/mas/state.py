@@ -3,7 +3,7 @@ from typing import TypedDict, Annotated, List
 
 from besser.BUML.metamodel.structural import DomainModel
 
-from python.ai_generator.mas.types import GlobalMessage, Task, ProposedEnvironmentalChange, Issue
+from ai_generator.mas.types import GlobalMessage, Task, ProposedEnvironmentalChange, Issue
 
 """
 Shared state passed between all agents in the multi-agent system.

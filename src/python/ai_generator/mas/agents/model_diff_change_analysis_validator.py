@@ -6,12 +6,12 @@ import json
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
-from python.config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
-from python.ai_generator.mas.agents.system_prompts import MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PROMPT, \
+from config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
+from ai_generator.mas.agents.system_prompts import MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PROMPT, \
     MODEL_DIFF_CHANGE_ANALYSIS_VALIDATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from python.ai_generator.mas.util import add_agent_history, add_proposed_environmental_changes, add_model_diff, \
+from ai_generator.mas.util import add_agent_history, add_proposed_environmental_changes, add_model_diff, \
     add_global_messages, add_task_list, add_models, add_issues, strip_json_markdown, run_with_retry
-from python.ai_generator.mas.state import State
+from ai_generator.mas.state import State
 
 """
 Model Diff Change Analysis Validator Agents runnable node function
@@ -55,7 +55,7 @@ async def model_diff_change_analysis_validator(state: State):
                 ),
         ):
             # Prints all SDK messages (assistant text, tool calls, tool results, final result)
-            print("SDK MESSAGE [model_diff_change_analysis_validator]:", type(message).__name__, repr(message))
+            # print("SDK MESSAGE [model_diff_change_analysis_validator]:", type(message).__name__, repr(message))
             if isinstance(message, ResultMessage):
                 result = message.result
         return result

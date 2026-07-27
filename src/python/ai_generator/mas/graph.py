@@ -1,16 +1,16 @@
 from langgraph.graph import StateGraph
 
-from python.ai_generator.mas.agents.code_change_plan_validator import code_change_plan_validator, code_change_plan_validator_routing, \
+from ai_generator.mas.agents.code_change_plan_validator import code_change_plan_validator, code_change_plan_validator_routing, \
     code_change_plan_validator_path_map
-from python.ai_generator.mas.agents.code_change_planer import code_change_planer
-from python.ai_generator.mas.agents.code_change_validator import code_change_validator, code_change_validator_routing, \
+from ai_generator.mas.agents.code_change_planer import code_change_planer
+from ai_generator.mas.agents.code_change_validator import code_change_validator, code_change_validator_routing, \
     code_change_validator_path_map
-from python.ai_generator.mas.agents.code_changer import code_changer
-from python.ai_generator.mas.agents.model_diff_change_analysis_validator import model_diff_change_analysis_validator, \
+from ai_generator.mas.agents.code_changer import code_changer
+from ai_generator.mas.agents.model_diff_change_analysis_validator import model_diff_change_analysis_validator, \
     model_diff_change_analysis_validator_router, model_diff_change_analysis_validator_path_map
-from python.ai_generator.mas.agents.model_diff_change_analyzer import model_diff_change_analyzer
-from python.ai_generator.mas.agents.orchestrator import orchestrator, orchestrator_path, orchestrator_path_map
-from python.ai_generator.mas.state import State
+from ai_generator.mas.agents.model_diff_change_analyzer import model_diff_change_analyzer
+from ai_generator.mas.agents.orchestrator import orchestrator, orchestrator_path, orchestrator_path_map
+from ai_generator.mas.state import State
 
 # TODO instead of raising error when there is no return or the json format it not correct i need to write it in the global messages instead of raising a exception
 
