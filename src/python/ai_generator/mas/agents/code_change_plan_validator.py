@@ -63,6 +63,7 @@ async def code_change_plan_validator(state: State):
         raise RuntimeError("code_change_plan_validator returned no result")
 
     print("RESULT [code_change_plan_validator]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("code_change_plan_validator_history", [])
     if isinstance(history, str):

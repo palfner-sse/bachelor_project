@@ -64,6 +64,7 @@ async def code_change_validator(state: State):
         raise RuntimeError("code_change_validator returned no result")
 
     print("RESULT [code_change_validator]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("code_change_validator_history", [])
     if isinstance(history, str):

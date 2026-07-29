@@ -64,6 +64,7 @@ async def model_diff_change_analyzer(state: State):
         raise RuntimeError("model_diff_change_analyzer returned no result")
 
     print("RESULT [model_diff_change_analyzer]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("model_diff_change_analyzer_history", [])
     if isinstance(history, str):

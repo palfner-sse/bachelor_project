@@ -64,6 +64,7 @@ async def model_diff_change_analysis_validator(state: State):
         raise RuntimeError("model_diff_change_analysis_validator returned no result")
 
     print("RESULT [model_diff_change_analysis_validator]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("model_diff_change_analysis_validator_history", [])
     if isinstance(history, str):
