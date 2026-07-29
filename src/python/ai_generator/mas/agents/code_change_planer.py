@@ -2,14 +2,12 @@
 Code Change Planer Agent as described in 6.2.2.4.
 """
 
-import json
-
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 from config import AGENT_MODEL, AGENT_CWD
 from ai_generator.mas.agents.system_prompts import CODE_CHANGE_PLANER_PROMPT
 from ai_generator.mas.util import add_agent_history, add_global_messages, add_task_list, \
-    add_proposed_environmental_changes, strip_json_markdown, run_with_retry
+    add_proposed_environmental_changes, run_with_retry
 from ai_generator.mas.state import State
 
 """

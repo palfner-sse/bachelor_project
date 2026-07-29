@@ -2,15 +2,13 @@
 Orchestrator Agent as described in 6.2.2.1.
 """
 
-import json
-
 from langgraph.graph import END
 
 from claude_agent_sdk import query, ClaudeAgentOptions, ResultMessage
 
 from config import AGENT_MODEL, ROUTING_MODEL, AGENT_CWD
 from ai_generator.mas.agents.system_prompts import ORCHESTRATOR_PROMPT, ORCHESTRATOR_PATH_PROMPT, BUML_DOKUMENTATION
-from ai_generator.mas.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, strip_json_markdown, run_with_retry
+from ai_generator.mas.util import add_global_messages, add_agent_history, add_task_list, add_model_diff, run_with_retry
 from ai_generator.mas.state import State
 
 """
