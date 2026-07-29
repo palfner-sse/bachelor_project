@@ -62,6 +62,7 @@ async def code_change_planer(state: State):
         raise RuntimeError("code_change_planer returned no result")
 
     print("RESULT [code_change_planer]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("code_change_planer_history", [])
     if isinstance(history, str):

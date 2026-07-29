@@ -64,6 +64,7 @@ async def orchestrator(state: State):
         raise RuntimeError("Orchestrator returned no result")
 
     print("RESULT [orchestrator]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("orchestrator_history", [])
     if isinstance(history, str):

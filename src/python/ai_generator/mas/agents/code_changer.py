@@ -61,6 +61,7 @@ async def code_changer(state: State):
         raise RuntimeError("code_changer returned no result")
 
     print("RESULT [code_changer]:", repr(json_result))
+    print("\n\n")
 
     history = json_result.get("code_changer_history", [])
     if isinstance(history, str):
