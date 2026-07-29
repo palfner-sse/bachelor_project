@@ -7,11 +7,13 @@ A toolchain for generating Java source code from BESSER B-UML models and automat
 ## What this project does
 
 ### Java Generator
-Generates Java class files from a B-UML domain model. For each class in the model it produces:
-- Private fields for attributes and navigable association ends
-- Constructors, getters, setters, and add-methods
-- Method stubs for all methods defined in the model
-- Correct `extends` declaration for inherited classes
+Generates Java source files from a B-UML domain model:
+- **Enumerations** — one `public enum` file per enumeration with all its literals
+- **Classes** — one class file per class (sorted by inheritance) with:
+  - Private fields for attributes and navigable association ends
+  - Constructors, getters, setters, and add-methods
+  - Method stubs for all methods defined in the model
+  - Correct `extends` declaration for inherited classes
 
 ### AI Generator
 When a B-UML model changes, the AI generator computes the diff between the before and after model and runs a multi-agent system (MAS) to automatically migrate the existing Java codebase to match the new model. The MAS pipeline consists of:
