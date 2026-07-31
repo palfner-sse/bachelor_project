@@ -1,6 +1,7 @@
 [project]
 name = "bachelor-project"
 version = "0.1.0"
+description = "BESSER B-UML Java code generator with bidirectional association support and AI-powered codebase migration"
 requires-python = ">=3.12.13"
 dependencies = [
     "besser>=7.0.0",

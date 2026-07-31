@@ -19,8 +19,10 @@
     - Getters and add-methods for association fields (addTo<Name> for self-associations, add<Type> for others)
     - Method stubs for all methods defined on the class (skips methods already generated as association adders)
 
-  Fixes vs original BESSER generator:
+  Enhancements vs original BESSER generator:
     - Respects is_navigable on association ends — only generates fields for navigable ends
+    - Supports bidirectional associations: generates back-references (e.g., many-to-one relationships)
+    - Each class generates fields for all its association ends (doesn't skip already-processed associations)
     - Generates method stubs from class_obj.methods
     - Fixes leading comma bug in overloaded constructor when attribs is empty
 #}
@@ -101,6 +103,7 @@ public class {{ class_obj.name }} {{ extends }}{
             {% endfor %}
             {% set class1_name = ns.end1.type.name %}
             {% set class2_name = ns.end2.type.name %}
+            {# Generate field for end2 (the other class) if navigable - supports bidirectional associations #}
             {% if ns.end1.multiplicity.max > 1 and ns.end2.multiplicity.max > 1 and ns.end2.is_navigable %}
                 {% if ns.end1.multiplicity.min != 1 and ns.end2.multiplicity.min == 1 or
                     ns.end1.multiplicity.min == 1 and ns.end2.multiplicity.min == 1 or
@@ -110,7 +113,6 @@ public class {{ class_obj.name }} {{ extends }}{
                     {% do assocs.append(class2_name.lower() + 's') %}
                     {% do assocs_card_over_1.append(class2_name) %}
                     {% do assocs_card_over_1.append(class2_name.lower() + 's') %}
-                    {% do processed_associations.append(association.name) %}
                 {% endif %}
             {% elif ns.end1.multiplicity.max == 1 and ns.end2.multiplicity.max > 1 and ns.end2.is_navigable %}
     private List<{{ class2_name }}> {{ class2_name.lower() }}s;
@@ -118,13 +120,17 @@ public class {{ class_obj.name }} {{ extends }}{
                 {% do assocs.append(class2_name.lower() + 's') %}
                 {% do assocs_card_over_1.append(class2_name) %}
                 {% do assocs_card_over_1.append(class2_name.lower() + 's') %}
-                {% do processed_associations.append(association.name) %}
             {% elif ns.end1.multiplicity.max == 1 and ns.end2.multiplicity.max == 1 and ns.end2.is_navigable %}
     private {{ class2_name }} {{ class2_name.lower() }};
                 {% do assocs.append(class2_name) %}
                 {% do assocs.append(class2_name.lower()) %}
-                {% do processed_associations.append(association.name) %}
+            {% elif ns.end1.multiplicity.max > 1 and ns.end2.multiplicity.max == 1 and ns.end2.is_navigable %}
+                {# Bidirectional: many-to-one association, generate back-reference to the one side #}
+    private {{ class2_name }} {{ class2_name.lower() }};
+                {% do assocs.append(class2_name) %}
+                {% do assocs.append(class2_name.lower()) %}
             {% endif %}
+            {# Don't mark as processed to support bidirectional associations - each class handles its own end #}
         {% endif %}
     {% endif %}
 {% endfor %}
