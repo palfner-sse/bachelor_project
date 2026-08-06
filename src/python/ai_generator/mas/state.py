@@ -1,8 +1,6 @@
 import operator
 from typing import TypedDict, Annotated, List
 
-from besser.BUML.metamodel.structural import DomainModel
-
 from ai_generator.mas.types import GlobalMessage, Task, ProposedEnvironmentalChange, Issue
 
 """
@@ -12,8 +10,8 @@ Annotated fields use operator.add so LangGraph appends new entries instead of ov
 Fields:
     global_messages                                 : Broadcast messages from all agents visible to every node in the graph.
     task_list                                       : Current list of tasks assigned by the orchestrator to downstream agents.
-    model_before                                    : The full BUML domain model before the change was applied.
-    model_after                                     : The full BUML domain model after the change was applied.
+    model_before                                    : Raw text content of the B-UML model file before the change was applied.
+    model_after                                     : Raw text content of the B-UML model file after the change was applied.
     model_diff                                      : Raw string diff between model_before and model_after.
     proposed_environmental_changes                  : Structured list of codebase changes proposed by the ModelDiffChangeAnalyzer.
     issues                                          : Validation issues raised by a validator agent for the previous agent to fix.
@@ -28,8 +26,8 @@ Fields:
 class State(TypedDict):
     global_messages: Annotated[List[GlobalMessage], operator.add]
     task_list: list[Task]
-    model_before: DomainModel
-    model_after: DomainModel
+    model_before: str
+    model_after: str
     model_diff: str
     proposed_environmental_changes: list[ProposedEnvironmentalChange]
     issues: list[Issue]

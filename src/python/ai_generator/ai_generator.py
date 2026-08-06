@@ -14,8 +14,6 @@ Args:
     code_base_path    : str  - Path to the codebase directory the agents will read and modify
 """
 def run_ai_generator(model_before_path: str, model_after_path: str, code_base_path: str):
-    from main import load_domain_model
-
     config.AGENT_CWD = code_base_path
 
     diff = subprocess.run(
@@ -25,8 +23,8 @@ def run_ai_generator(model_before_path: str, model_after_path: str, code_base_pa
     )
 
     result = asyncio.run(graph.ainvoke({
-        "model_before": load_domain_model(model_before_path),
-        "model_after": load_domain_model(model_after_path),
+        "model_before": open(model_before_path).read(),
+        "model_after": open(model_after_path).read(),
         "model_diff": diff.stdout,
         "global_messages": [],
         "task_list": [],
