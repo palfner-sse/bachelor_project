@@ -1,8 +1,10 @@
 import argparse
 import importlib
+import json
 
 from ai_generator.ai_generator import run_ai_generator
 from besser_java_generator.java_generator import JavaGenerator
+from codebase_analyzer import analyze_model
 
 
 """
@@ -47,14 +49,23 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--before", required=True, help="path to the B-UML model file; used as the input model for the Java generator or as the before model for the AI generator")
     parser.add_argument("-a", "--after", required=False, help="path to the B-UML model file after the change; only required when using the AI generator")
-    parser.add_argument("-c", "--codebase", required=True, help="path to the codebase directory; used by the AI generator as the directory to read and modify, or by the Java generator as the output directory for generated .java files")
+    parser.add_argument("-c", "--codebase", required=False, help="path to the codebase directory; used by the AI generator as the directory to read and modify, or by the Java generator as the output directory for generated .java files")
     parser.add_argument("-j", "--java", action="store_true", required=False, help="use the Java generator instead of the AI generator")
+    parser.add_argument("--count", action="store_true", required=False, help="count changeable elements in the model instead of running a generator")
 
     args = parser.parse_args()
 
-    if args.java:
+    if args.count:
+        model = load_domain_model(args.before)
+        result = analyze_model(model)
+        print(json.dumps(result, indent=2))
+    elif args.java:
+        if not args.codebase:
+            parser.error("-c/--codebase is required when using the Java generator")
         JavaGenerator(model=load_domain_model(args.before), output_dir=args.codebase).generate()
     else:
         if not args.after:
             parser.error("-a/--after is required when using the AI generator")
+        if not args.codebase:
+            parser.error("-c/--codebase is required when using the AI generator")
         run_ai_generator(args.before, args.after, args.codebase)

@@ -55,6 +55,12 @@ Migrate an existing codebase based on a model change, wich works best with -c ./
 python src/python/main.py -b <before_model.py> -a <after_model.py> -c <codebase_dir>
 ```
 
+### Codebase Analyzer
+Count all changeable elements in a B-UML model (classes, attributes, associations, methods, enums, etc.):
+```bash
+python src/python/main.py -b <model.py> --count
+```
+
 ### Arguments
 
 | Argument | Description |
@@ -63,6 +69,7 @@ python src/python/main.py -b <before_model.py> -a <after_model.py> -c <codebase_
 | `-a` / `--after` | Path to the B-UML model file after the change. Required for the AI generator. |
 | `-c` / `--codebase` | Output directory for the Java generator, or the codebase directory the AI generator reads and modifies. |
 | `-j` / `--java` | Flag to use the Java generator. Omit to use the AI generator. |
+| `--count` | Count changeable elements in the model (classes, attributes, methods, etc.). Outputs JSON with element counts. |
 
 ### Example
 
@@ -72,4 +79,7 @@ python src/python/main.py -b input/before/model.py -c input/before/code_base/src
 
 # Migrate codebase after a model change
 python src/python/main.py -b input/before/model.py -a input/after/model.py -c input/before/code_base/src
+
+# Count changeable elements in a model
+python src/python/main.py -b input/model.py --count
 ```
