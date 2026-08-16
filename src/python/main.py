@@ -4,7 +4,7 @@ import json
 
 from ai_generator.ai_generator import run_ai_generator
 from besser_java_generator.java_generator import JavaGenerator
-from codebase_analyzer import analyze_model
+from model_analyzer import analyze_model
 
 
 """
